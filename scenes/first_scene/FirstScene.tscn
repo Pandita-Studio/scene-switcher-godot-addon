@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2cgqmg1tuxxo"]
+
+[ext_resource type="Script" uid="uid://dyw2coe4dnodp" path="res://scenes/first_scene/first_scene.gd" id="1_1gna8"]
+
+[node name="FirstScene" type="Node2D"]
+script = ExtResource("1_1gna8")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/CenterContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "this is the first scene"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Switch to second scene"
+
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]

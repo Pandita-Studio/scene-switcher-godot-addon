@@ -11,8 +11,28 @@ config_version=5
 [application]
 
 config/name="SceneSwitcher"
+run/main_scene="uid://c2cgqmg1tuxxo"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneSwitcher="*res://addons/sceneswitcher/sceneswitcher.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/sceneswitcher/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://scenes/": "purple"
+}
+
+[plugins]
+
+scene_swicther/fade_duration=0.5
+scene_swicther/transition_delay=2.0
 
 [rendering]
 
