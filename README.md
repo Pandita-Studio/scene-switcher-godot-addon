@@ -15,7 +15,7 @@ Lightweight scene transition helper for Godot 4.x that adds a global autoload ca
 
 ## What it does
 
-When the plugin is enabled, it registers an autoload singleton named `SceneSwitcher` (class `SceneSwitcherHandler`). At runtime, it automatically adds a full-screen overlay (a CanvasLayer with a ColorRect) that:
+When the plugin is enabled, it registers an autoload singleton named `SceneSwitcher`. At runtime, it dynamically creates a full-screen overlay (a CanvasLayer with a ColorRect) that:
 
 - On game start: waits a short delay, then fades out from black
 - On scene switch: fades to black, changes the scene, waits a short delay, and fades out again
@@ -72,7 +72,7 @@ Behavior details:
 
 ## API Reference
 
-Autoload: `SceneSwitcher` (class `SceneSwitcherHandler`)
+Autoload: `SceneSwitcher`
 
 - Signals
 	- `finished` — Emitted after a startup fade-out or after a full switch (fade-in, change scene, delay, fade-out).
@@ -80,10 +80,15 @@ Autoload: `SceneSwitcher` (class `SceneSwitcherHandler`)
 - Methods
 	- `switch_to(p_scene_path: String) -> void` — Fades to black, changes the scene to `p_scene_path`, waits `transition_delay`, fades out, then emits `finished`.
 
-Overlay: `SceneSwitcherBlackRect`
+- Properties
+	- `fade_duration: float` — How long the fade animation takes (read from Project Settings at startup).
+	- `transition_delay: float` — Extra delay before fading out on startup and between fade-in and fade-out during a scene switch (read from Project Settings at startup).
 
-- A `CanvasLayer` with a `ColorRect` child used to animate the fade. You’ll find it at `res://addons/sceneswitcher/nodes/blackrect/black_rect.tscn`.
-- By default it’s opaque black; you can adjust the color in that scene if desired.
+The overlay is created dynamically at runtime:
+
+- A `CanvasLayer` (layer 100) with a `ColorRect` child (black by default) is instantiated in `_ready()`.
+- The ColorRect covers the entire viewport and ignores mouse events.
+- Fades are performed using tweens on the ColorRect's `modulate:a` property.
 
 ---
 
@@ -100,8 +105,9 @@ Each scene has a button that calls `SceneSwitcher.switch_to(...)` to navigate to
 
 ## How it works (under the hood)
 
-- The plugin registers an autoload singleton (`SceneSwitcher`) and, at runtime, defers adding a `SceneSwitcherBlackRect` CanvasLayer to the root viewport.
-- Fades are performed using tweens on the `ColorRect`’s alpha channel.
+- The plugin registers an autoload singleton (`SceneSwitcher`) and manages Project Settings for fade duration and transition delay.
+- At runtime, the singleton dynamically creates a CanvasLayer (layer 100) with a full-screen ColorRect child.
+- Fades are performed using tweens on the ColorRect's `modulate:a` property.
 - Startup sequence: wait `transition_delay` → fade out from black → emit `finished`.
 - Switch sequence: fade to black → `change_scene_to_file(path)` → wait `transition_delay` → fade out → emit `finished`.
 
